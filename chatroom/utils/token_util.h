@@ -4,7 +4,6 @@
 #include <string>
 #include <string_view>
 
-#include "chatroom/model/user.h"
 #include "flare/base/never_destroyed.h"
 #include "thirdparty/jwt-cpp/jwt-cpp/jwt.h"
 
@@ -14,9 +13,9 @@ class TokenUtil {
  public:
   static TokenUtil* Instance();
 
-  std::string GenerateToken(const User& user);
+  std::string GenerateToken(const std::string& username);
 
-  bool VerifyToken(std::string_view token, const User& user);
+  bool VerifyToken(std::string_view token, const std::string& username);
 
  private:
   friend flare::NeverDestroyedSingleton<TokenUtil>;

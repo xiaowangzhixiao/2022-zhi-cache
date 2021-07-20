@@ -1,7 +1,7 @@
-#include "thirdparty/jwt-cpp/jwt-cpp/jwt.h"
+#include "chatroom/utils/token_util.h"
 
-#include <system_error>
 #include <iostream>
+#include <system_error>
 
 #include "thirdparty/googletest/gtest/gtest.h"
 
@@ -22,5 +22,12 @@ TEST(JWT, jwt) {
   std::error_code err;
   verif.verify(decoded, err);
   ASSERT_TRUE(err);
-  ASSERT_EQ(err.category(), jwt::error::signature_verification_error_category());
+  ASSERT_EQ(err.category(),
+            jwt::error::signature_verification_error_category());
+}
+
+TEST(TOKEN_UTIL, test) {
+  std::string username = "username";
+  auto token = chatroom::TokenUtil::Instance()->GenerateToken(username);
+  ASSERT_TRUE(chatroom::TokenUtil::Instance()->VerifyToken(token, username));
 }
