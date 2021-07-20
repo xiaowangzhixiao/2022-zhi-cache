@@ -5,6 +5,9 @@ cc_library(
     deps = [
         "//thirdparty/jwt-cpp:jwt-cpp",
         "//flare/rpc:http",
+        "//flare/base:string",
+        "//flare/base/encoding:base64",
     ],
     visibility = 'PUBLIC',    
 )
+
