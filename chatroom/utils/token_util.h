@@ -3,6 +3,7 @@
 
 #include <string>
 #include <string_view>
+#include <optional>
 
 #include "flare/base/never_destroyed.h"
 #include "thirdparty/jwt-cpp/jwt-cpp/jwt.h"
@@ -15,7 +16,7 @@ class TokenUtil {
 
   std::string GenerateToken(const std::string& username);
 
-  bool VerifyToken(std::string_view token, const std::string& username);
+  std::optional<std::string> VerifyToken(std::string_view token);
 
  private:
   friend flare::NeverDestroyedSingleton<TokenUtil>;

@@ -21,7 +21,7 @@ cc_library(
     '//flare/base:string',
     '//flare/base/encoding:base64',
   ],
-  visibility = '//flare/rpc/builtin/...',
+  visibility = 'PUBLIC',
 )
 
 cc_test(

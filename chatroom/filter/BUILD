@@ -3,11 +3,12 @@ cc_library(
     hdrs = ["login_filter.h"], 
     srcs = ["login_filter.cc"], 
     deps = [
+        "//chatroom/utils:token_util",
         "//thirdparty/jwt-cpp:jwt-cpp",
         "//flare/rpc:http",
         "//flare/base:string",
         "//flare/base/encoding:base64",
     ],
-    visibility = 'PUBLIC',    
+    visibility = '//chatroom/...',
 )
 

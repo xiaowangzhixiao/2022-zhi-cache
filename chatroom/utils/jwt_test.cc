@@ -24,10 +24,18 @@ TEST(JWT, jwt) {
   ASSERT_TRUE(err);
   ASSERT_EQ(err.category(),
             jwt::error::signature_verification_error_category());
+
+  auto verifer = jwt::verify()
+                   .with_issuer("auth0")
+                   .allow_algorithm(jwt::algorithm::hs256{"secret"});
+  verifer.verify(decoded, err);
+  ASSERT_FALSE(err);
 }
 
 TEST(TOKEN_UTIL, test) {
   std::string username = "username";
   auto token = chatroom::TokenUtil::Instance()->GenerateToken(username);
-  ASSERT_TRUE(chatroom::TokenUtil::Instance()->VerifyToken(token, username));
+  auto username1 = chatroom::TokenUtil::Instance()->VerifyToken(token);
+  ASSERT_TRUE(username1.has_value());
+  ASSERT_EQ(username1.value(), username);
 }

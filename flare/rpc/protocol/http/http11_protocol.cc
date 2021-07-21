@@ -65,7 +65,8 @@ bool IsMessageClobbered(std::string_view view) {
 }
 
 bool ExpectingContentLength(std::string_view view) {
-  if (StartsWith(view, "GET"sv) || StartsWith(view, "HEAD"sv)) {
+  if (StartsWith(view, "GET"sv) || StartsWith(view, "HEAD"sv) ||
+      StartsWith(view, "PUT"sv) || StartsWith(view, "POST"sv)) {
     return false;
   }
 

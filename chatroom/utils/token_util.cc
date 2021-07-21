@@ -28,19 +28,21 @@ std::string TokenUtil::GenerateToken(const std::string& username) {
       .sign(jwt::algorithm::hs256{TOKEN_SECRET});
 }
 
-bool TokenUtil::VerifyToken(std::string_view token,
-                            const std::string& username) {
-  if (username.empty()) {
-    return false;
-  }
+std::optional<std::string> TokenUtil::VerifyToken(std::string_view token) {
   auto decoded = jwt::decode(std::string(token));
   auto verifier = jwt::verify()
                       .with_issuer(TOKEN_ISSURE)
-                      .with_claim(TOKEN_CLAIM_KEY, jwt::claim(username))
                       .allow_algorithm(jwt::algorithm::hs256{TOKEN_SECRET});
   std::error_code err;
   verifier.verify(decoded, err);
-  return !err;
+  if (err) {
+    return std::nullopt;
+  }
+  if (decoded.get_payload_claims().contains(TOKEN_CLAIM_KEY)) {
+    return decoded.get_payload_claim(TOKEN_CLAIM_KEY).as_string();
+  } else {
+    return std::nullopt;
+  }
 }
 
 TokenUtil::TokenUtil() {}

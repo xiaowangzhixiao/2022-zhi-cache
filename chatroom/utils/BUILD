@@ -6,7 +6,8 @@ cc_library(
         "//thirdparty/jwt-cpp:jwt-cpp",
         "//flare/base:never_destroyed",
         "//flare/base:string",
-    ]
+    ],
+    visibility = "//chatroom/..."
 )
 
 cc_test(
@@ -17,3 +18,11 @@ cc_test(
         "//thirdparty/jwt-cpp:jwt-cpp",
     ]
 )
+
+cc_library(
+    name = "param_parse",
+    hdrs = "param_parse.h",
+    srcs = "param_parse.cc",
+    visibility = "//chatroom/..."
+)
+

@@ -15,6 +15,7 @@
 #include "flare/rpc/server.h"
 
 #include "chatroom/filter/login_filter.h"
+#include "chatroom/handler/user_handler.h"
 #include "flare/fiber/this_fiber.h"
 #include "flare/init.h"
 #include "flare/init/override_flag.h"
@@ -30,8 +31,10 @@ namespace chatroom {
 int Entry(int argc, char** argv) {
   flare::Server server;
   server.AddProtocol("http");
-  server.AddHttpFilter(std::make_unique<LoginFilter>());
-  // server.AddHttpHandler("/", std::make_unique<>());
+  server.AddHttpFilter(std::make_unique<LoginFilter>(flare::detail::UriMatcher(std::regex("^/user(Login([/\?#](.*?))?)?$"))));
+  server.AddHttpHandler(std::regex("^/user(/.+)?$"), std::make_unique<UserHandler>());
+  server.AddHttpPrefixHandler("/userLogin", std::make_unique<UserLoginHandler>());
+  server.AddHttpHandler(std::regex("^/room/(.+?)/enter$"), std::make_unique<UserEnterRoomHandler>());
   server.ListenOn(flare::EndpointFromIpv4("0.0.0.0", 8080));
   FLARE_CHECK(server.Start());
 
