@@ -1,0 +1,237 @@
+openapi: 3.0.1
+info:
+  title: Memory Cache Contest
+  description: 'This is the API document of memory cache contest. '
+  version: 1.0.0
+externalDocs:
+  description: Find out more about Swagger
+  url: 'http://swagger.io'
+tags:
+  - name: cache
+    description: Everything about cache
+paths:
+  /init:
+    get:
+      tags:
+        - cache
+      summary: init
+      responses:
+        '200':
+          description: 如果加载完成数据，返回 'ok'的字符串，我们认为程序启动完成
+          content:
+            text/plain:
+              schema:
+                type: string
+        '400':
+          description: 如果没有加载成功
+  /query/{key}:
+    get:
+      tags:
+        - cache
+      summary: 根据key进行查询
+      operationId: query
+      parameters:
+        - name: key
+          in: path
+          required: true
+          description: key of cache
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            text/plain:
+              schema:
+                type: string
+        '404':
+          description: The key can not be found in the cache
+  /add:
+    post:
+      tags:
+        - cache
+      summary: 插入key和value
+      operationId: add
+      requestBody:
+        description: key and value to insert
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InsrtRequest'
+        required: true
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Insert key and value failed
+  /del/{key}:
+    get:
+      tags:
+        - cache
+      summary: 删除指定的key
+      operationId: delete
+      parameters:
+        - name: key
+          in: path
+          required: true
+          description: key of cache
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success
+  /list:
+    post:
+      tags:
+        - cache
+      summary: 根据key的列表列举value
+      operationId: list
+      requestBody:
+        description: list of keys
+        content:
+          application/json:
+            schema:
+              type: "array"
+              items:
+                type: "string"
+        required: true
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InsrtRequestList'
+        '404':
+          description: The key can not be found in the cache
+  /batch:
+    post:
+      tags:
+        - cache
+      summary: 批量插入key和value
+      operationId: batch
+      requestBody:
+        description: list of key and value to insert
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InsrtRequestList'
+        required: true
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Insert key and value failed
+  /zadd/{key}:
+    post:
+      tags:
+        - cache
+      summary: 将一个value及其分数值加入到有序集当中，如果value已经是有序集的成员，那么更新这个value的分数值，有序集的定义参考：https://redis.io/docs/manual/data-types/#sorted-sets
+      operationId: zadd
+      parameters:
+        - name: key
+          in: path
+          required: true
+          description: 'key of cache'
+          schema:
+            type: string
+      requestBody:
+        description: value and score to insert
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ZaddRequest'
+      responses:
+        '200':
+          description: Success
+  /zrange/{key}:
+    post:
+      tags:
+        - cache
+      summary: 返回有序集中指定分数值区间内的value和分数值，有序集的定义参考：https://redis.io/docs/manual/data-types/#sorted-sets
+      operationId: zrange
+      parameters:
+        - name: key
+          in: path
+          required: true
+          description: 'key of cache'
+          schema:
+            type: string
+      requestBody:
+        description: the range of score
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ZrangeRequest'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ZaddRequestList'
+        '404':
+          description: The key can not be found in the cache
+  /zrmv/{key}/{value}:
+    get:
+      tags:
+        - cache
+      summary: 移除有序集中的一个value，不存在的value将被忽略，有序集的定义参考：https://redis.io/docs/manual/data-types/#sorted-sets
+      operationId: zrmv
+      parameters:
+        - name: key
+          in: path
+          required: true
+          description: 'key of cache'
+          schema:
+            type: string
+        - name: value
+          in: path
+          required: true
+          description: 'value of cache'
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success
+components:
+  schemas:
+    InsrtRequest:
+      type: object
+      properties:
+        key:
+          type: string
+        value:
+          type: string
+      xml:
+        name: InsrtRequest
+    InsrtRequestList:
+      type: "array"
+      items:
+        $ref: "#/components/schemas/InsrtRequest"
+      xml:
+        name: InsrtRequestList
+    ZaddRequest:
+      type: object
+      properties:
+        score:
+          type: integer
+        value:
+          type: string
+      xml:
+        name: ZaddRequest
+    ZrangeRequest:
+      type: object
+      properties:
+        min_score:
+          type: integer
+        max_score:
+          type: integer
+      xml:
+        name: ZrangeRequest
+    ZaddRequestList:
+      type: "array"
+      items:
+        $ref: "#/components/schemas/ZaddRequest"
+      xml:
+        name: ZaddRequestList
