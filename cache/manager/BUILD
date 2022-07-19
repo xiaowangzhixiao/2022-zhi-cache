@@ -5,7 +5,6 @@ cc_library(
     hdrs = glob("*.h"),
     srcs = glob("*.cc"),
     deps = [
-        "//cache/model:model",
         "//flare/base:never_destroyed",
     ],
     visibility = "//cache/...",
