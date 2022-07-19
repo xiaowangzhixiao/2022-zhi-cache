@@ -11,7 +11,7 @@ namespace zhi {
 namespace cache {
 class KvManager {
  public:
-  KvManager * Instance();
+  KvManager* Instance();
 
   bool Init(size_t partition_num);
 
@@ -26,11 +26,11 @@ class KvManager {
  private:
   friend class flare::NeverDestroyedSingleton<KvManager>;
   KvManager() = default;
-  size_t hash(const std::string& str);
+  size_t hash(const std::string& str) const;
 
   size_t _partition_num;
   std::vector<std::unordered_map<std::string, std::string>> _map_vec;
   std::vector<std::mutex> _mutex_vec;
-}
+};
 }
 }
