@@ -8,9 +8,7 @@ cc_library(
     ],
     deps = [
         "//cache/manager:manager",
-        "//cache/model:model",
         "//cache/utils:param_parse",
-        "//cache/utils:token_util",
         "//flare/rpc:rpc",
         "//thirdparty/jsoncpp:jsoncpp",
         "//thirdparty/xpack:xpack",
