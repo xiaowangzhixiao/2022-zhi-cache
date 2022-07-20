@@ -5,6 +5,7 @@ cc_library(
   ],
   hdrs = glob('*.h'),
   deps = [
+    '//flare/fiber:fiber',
     '//thirdparty/glog:glog',
     '//thirdparty/rocksdb:rocksdb',
   ],

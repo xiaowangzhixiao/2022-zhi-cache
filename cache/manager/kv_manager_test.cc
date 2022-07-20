@@ -2,6 +2,7 @@
 
 
 namespace zhi {
-namespace cache {}  // namespace cache
+namespace cache {
 
+}  // namespace cache
 }  // namespace zhi
