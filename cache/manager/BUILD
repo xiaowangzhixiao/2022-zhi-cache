@@ -6,6 +6,7 @@ cc_library(
     srcs = glob("*.cc"),
     deps = [
         "//flare/base:never_destroyed",
+        '//cache/storage/memory:memory',
     ],
     visibility = "//cache/...",
 )

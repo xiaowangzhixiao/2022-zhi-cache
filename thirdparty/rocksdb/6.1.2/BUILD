@@ -224,7 +224,6 @@ cc_library(
       'utilities/merge_operators/string_append/stringappend2.cc',
       'utilities/merge_operators/string_append/stringappend.cc',
     ],
-    hdrs = [],
     incs = ['.', 'include/', '../../snappy'],
 
     export_incs = ['.'],

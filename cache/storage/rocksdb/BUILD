@@ -8,6 +8,9 @@ cc_library(
     '//thirdparty/glog:glog',
     '//thirdparty/rocksdb:rocksdb',
   ],
+  extra_linkflags=[
+    '-lstdc++fs',
+  ],
   visibility = "//cache/...",
 )
 
@@ -16,5 +19,6 @@ cc_test(
     srcs = 'local_db_test.cc',
     deps = [
         ':local_db',
+        '//thirdparty/glog:glog',
     ],
 )

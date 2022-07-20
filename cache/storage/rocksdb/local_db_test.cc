@@ -1,6 +1,3 @@
-// Copyright (c) 2019 Tencent Inc.
-// Author: Qing Yin<nealqing@tencent.com>
-
 #include "cache/storage/rocksdb/local_db.h"
 
 #include <filesystem>

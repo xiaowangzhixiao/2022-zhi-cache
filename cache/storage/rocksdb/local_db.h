@@ -11,7 +11,6 @@
 namespace zhi {
 namespace cache {
 
-// rocksdb的API
 // 暂时只支持value为单列
 class LocalDB {
  public:
@@ -28,15 +27,13 @@ class LocalDB {
 
   std::shared_ptr<rocksdb::ColumnFamilyHandle> GetColumnHandle(Column column);
 
-  void ClearColumn(Column column);
-
  public:
   rocksdb::Status Write(const std::string& key, const std::string& value);
 
   rocksdb::Status Write(const rocksdb::Slice& key, const rocksdb::Slice& value,
                         Column column);
 
-  rocksdb::Status Read(const rocksdb::Slice& key, std::string* value);
+  rocksdb::Status Read(const std::string& key, std::string* value);
 
   rocksdb::Status Read(const rocksdb::Slice& key, std::string* value,
                        Column column);

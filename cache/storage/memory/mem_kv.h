@@ -5,17 +5,17 @@
 #include <unordered_map>
 #include <vector>
 
-#include "flare/base/never_destroyed.h"
-#include "cache/storage/memory/mem_kv.h"
-
 namespace zhi {
 namespace cache {
 
-class KvManager {
- public:
-  KvManager* Instance();
+struct ConcurrentMap {
+  std::shared_mutex m;
+  std::unordered_map<std::string, std::string> map;
+};
 
-  bool Init();
+class MemKv {
+ public:
+  bool Init(int partition_num);
 
   const std::string* Query(const std::string& key);
 
@@ -23,12 +23,14 @@ class KvManager {
 
   bool Del(const std::string& key);
 
-  ~KvManager() = default;
+  MemKv() = default;
+  ~MemKv() = default;
 
  private:
-  friend class flare::NeverDestroyedSingleton<KvManager>;
-  KvManager() = default;
-  MemKv _memdb;
+  size_t Hash(const std::string& str) const;
+
+  size_t _partition_num;
+  std::vector<ConcurrentMap> _map_vec;
 };
 
 }  // namespace cache

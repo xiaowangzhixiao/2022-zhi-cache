@@ -4,7 +4,7 @@ cc_library(
     name = 'handler',
     hdrs = glob("*.h"),
     srcs = [
-        'user_handler.cc',
+        # 'user_handler.cc',
     ],
     deps = [
         "//cache/manager:manager",

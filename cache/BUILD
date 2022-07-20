@@ -4,7 +4,6 @@ cc_binary(
     'server.cc',
   ],
   deps = [
-    '//cache/filter:login_filter',
     '//cache/handler:handler',
     '//flare:init',
     '//flare/fiber:fiber',

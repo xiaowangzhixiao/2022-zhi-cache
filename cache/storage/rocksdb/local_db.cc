@@ -1,14 +1,11 @@
-// Copyright (c) 2019 Tencent Inc.
-// Author: Willie Kou (williekou@tencent.com)
-
 #include "cache/storage/rocksdb/local_db.h"
 
 #include <filesystem>
 #include <map>
-#include <thread>
 #include <utility>
 
 #include "cache/storage/rocksdb/local_db_option.h"
+#include "flare/fiber/this_fiber.h"
 #include "glog/logging.h"
 #include "thirdparty/rocksdb/cache.h"
 #include "thirdparty/rocksdb/merge_operator.h"
@@ -69,7 +66,6 @@ bool LocalDB::OpenDB(const LocalDbOption& op,
   options.compaction_readahead_size = op.compaction_readahead_size;
   rocksdb::DbPath db_path;
   db_path.path = data_path;
-  // db_path.target_size = uint64_t(200) * 1024 * 1024 * 1024;
   db_path.target_size = uint64_t(1024) * 1024 * 1024 * 1024 * 10;
   options.db_paths.push_back(db_path);
   fs::create_directory(data_path);
@@ -220,21 +216,6 @@ std::shared_ptr<rocksdb::ColumnFamilyHandle> LocalDB::GetColumnHandle(
   return handles_[column];
 }
 
-void LocalDB::ClearColumn(Column column) {
-  auto prev_handle = handles_[column];
-  auto column_name = prev_handle->GetName();
-  db_->DropColumnFamily(prev_handle.get());
-
-  rocksdb::ColumnFamilyHandle* new_handle = nullptr;
-  rocksdb::ColumnFamilyDescriptor cf;
-  cf.name = column_name;
-  auto status = db_->CreateColumnFamily(rocksdb::ColumnFamilyOptions(),
-                                        column_name, &new_handle);
-  CHECK(status.ok()) << "Faield to recreat column " << column_name
-                     << ", status=" << status.ToString();
-  handles_[column].reset(new_handle);
-}
-
 rocksdb::Status LocalDB::Write(const std::string& key,
                                const std::string& value) {
   return Write(key, value, LocalDB::COLUMN_DEFAULT);
@@ -251,7 +232,7 @@ rocksdb::Status LocalDB::Write(const rocksdb::Slice& key,
     if (status.ok()) {
       break;
     } else {
-      std::this_thread::yield();
+      flare::this_fiber::Yield();
       ++retry_count;
     }
   }
@@ -260,7 +241,7 @@ rocksdb::Status LocalDB::Write(const rocksdb::Slice& key,
   return status;
 }
 
-rocksdb::Status LocalDB::Read(const rocksdb::Slice& key, std::string* value) {
+rocksdb::Status LocalDB::Read(const std::string& key, std::string* value) {
   return Read(key, value, LocalDB::COLUMN_DEFAULT);
 }
 
