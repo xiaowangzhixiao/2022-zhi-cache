@@ -20,7 +20,7 @@ class MemKv {
  public:
   bool Init(int partition_num);
 
-  const V* Query(const std::string& key);
+  const V* Get(const std::string& key);
 
   bool Add(std::string&& key, V&& value);
 
@@ -53,7 +53,7 @@ bool MemKv<V>::Init(int partition_num) {
 }
 
 template <class V>
-const V* MemKv<V>::Query(const std::string& key) {
+const V* MemKv<V>::Get(const std::string& key) {
   size_t idx = Hash(key);
   auto& sub_map = _map_vec[idx];
   std::shared_lock lock(sub_map.m);

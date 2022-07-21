@@ -7,6 +7,7 @@
 #include "cache/model/request_model.h"
 #include "cache/utils/param_parse.h"
 #include "flare/rpc/http_handler.h"
+#include "flare/base/logging.h"
 
 namespace zhi {
 namespace cache {
@@ -22,7 +23,7 @@ void QueryKeyHandler::OnGet(const flare::HttpRequest& request,
                             flare::HttpResponse* response,
                             flare::HttpServerContext* context) {
   ParamParse path_param_parse(request.uri());
-  auto path_param_map = path_param_parse.GetPathParam("/query/{key}");
+  auto path_param_map = path_param_parse.GetPathParam("/query/{key}$");
   auto key = path_param_map["key"];
   if (!key) {
     response->set_status(flare::HttpStatus::BadRequest);
@@ -75,7 +76,7 @@ void DelKeyHandler::OnGet(const flare::HttpRequest& request,
                           flare::HttpResponse* response,
                           flare::HttpServerContext* context) {
   ParamParse path_param_parse(request.uri());
-  auto path_param_map = path_param_parse.GetPathParam("/del/{key}");
+  auto path_param_map = path_param_parse.GetPathParam("/del/{key}$");
   auto key = path_param_map["key"];
   if (!key) {
     response->set_status(flare::HttpStatus::BadRequest);

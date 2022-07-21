@@ -17,7 +17,7 @@ bool KvManager::Init() {
 }
 
 const std::string* KvManager::Query(const std::string& key) {
-  return _memdb.Query(key);
+  return _memdb.Get(key);
 }
 
 bool KvManager::Add(std::string&& key, std::string&& value) {

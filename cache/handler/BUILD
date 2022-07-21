@@ -9,6 +9,7 @@ cc_library(
         "//cache/utils:param_parse",
         "//cache/model:model",
         "//flare/rpc:rpc",
+        "//flare/base:logging",
         "//thirdparty/jsoncpp:jsoncpp",
         "//thirdparty/xpack:xpack",
     ],

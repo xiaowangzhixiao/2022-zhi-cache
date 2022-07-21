@@ -26,6 +26,7 @@
 using namespace std::literals;
 
 FLARE_OVERRIDE_FLAG(logtostderr, true);
+FLARE_OVERRIDE_FLAG(logbufsecs, 0);
 FLARE_OVERRIDE_FLAG(flare_rpc_server_no_builtin_pages, false);
 
 namespace zhi {

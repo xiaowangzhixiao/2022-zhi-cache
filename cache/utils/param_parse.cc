@@ -1,6 +1,8 @@
 #include "param_parse.h"
 
+#include <iostream>
 #include <regex>
+
 namespace zhi {
 namespace cache {
 std::optional<std::string> ParamParse::Get(const std::string& key) {
@@ -22,12 +24,12 @@ ParamParse::PathParamMap ParamParse::GetPathParam(const std::string& path) {
   auto path_iter = path.begin();
   while (std::regex_search(path_iter, path.end(), param_key_result,
                            std::regex("\\{(.*?)\\}"))) {
-    path_param.emplace_back(param_key_result[1], std::nullopt);
+    path_param.emplace_back(std::move(param_key_result[1]), std::nullopt);
     path_iter = param_key_result.suffix().first;
   }
 
   std::string regex =
-      std::regex_replace(path, std::regex("\\{(.*?)\\}"), "\\{(.*?)\\}");
+      std::regex_replace(path, std::regex("\\{(.*?)\\}"), "(.*?)");
   std::smatch param_value_result;
   if (std::regex_search(_uri.cbegin(), _uri.cend(), param_value_result,
                         std::regex(regex))) {
