@@ -3,12 +3,11 @@
 cc_library(
     name = 'handler',
     hdrs = glob("*.h"),
-    srcs = [
-        # 'user_handler.cc',
-    ],
+    srcs = glob('*.cc', exclude='*_test.cc'), 
     deps = [
         "//cache/manager:manager",
         "//cache/utils:param_parse",
+        "//cache/model:model",
         "//flare/rpc:rpc",
         "//thirdparty/jsoncpp:jsoncpp",
         "//thirdparty/xpack:xpack",

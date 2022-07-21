@@ -14,6 +14,10 @@
 
 #include "flare/rpc/server.h"
 
+#include "cache/handler/init_handler.h"
+#include "cache/handler/kv_handler.h"
+#include "cache/handler/zset_handler.h"
+#include "cache/manager/kv_manager.h"
 #include "flare/fiber/this_fiber.h"
 #include "flare/init.h"
 #include "flare/init/override_flag.h"
@@ -27,27 +31,24 @@ FLARE_OVERRIDE_FLAG(flare_rpc_server_no_builtin_pages, false);
 namespace zhi {
 namespace cache {
 int Entry(int argc, char** argv) {
+  KvManager::Instance()->Init();
   flare::Server server;
   server.AddProtocol("http");
+  server.AddHttpHandler("/init", std::make_unique<InitQueryHandler>());
+  server.AddHttpHandler(std::regex("^/query/(.+?)$"),
+                        std::make_unique<QueryKeyHandler>());
+  server.AddHttpHandler("/add", std::make_unique<AddKeyHandler>());
+  server.AddHttpHandler(std::regex("^/del/(.+?)$"),
+                        std::make_unique<DelKeyHandler>());
+  server.AddHttpHandler("/list", std::make_unique<BatchQueryKeyHandler>());
+  server.AddHttpHandler("/batch", std::make_unique<BatchAddKeyHandler>());
+  server.AddHttpHandler(std::regex("^/zadd/(.+?)$"),
+                        std::make_unique<ZaddHandler>());
+  server.AddHttpHandler(std::regex("^/zrange/(.+?)$"),
+                        std::make_unique<ZrangeHandler>());
+  server.AddHttpHandler(std::regex("^/zrmv/(.+?)$"),
+                        std::make_unique<ZrmvHandler>());
 
-  // server.AddHttpHandler("/init", std::make_unique<InitQueryHandler>());
-  // server.AddHttpHandler(std::regex("^/query/(.+?)$"),
-	// 		std::make_unique<QueryKeyHandler>());
-  // server.AddHttpHandler("/add",
-	// 		std::make_unique<AddKeyHandler>());
-  // server.AddHttpHandler(std::regex("^/del/(.+?)$"),
-	// 		std::make_unique<DelKeyHandler>());
-  // server.AddHttpHandler("/list",
-	// 		std::make_unique<BatchQueryKeyHandler>());
-  // server.AddHttpHandler("/batch",
-	// 		std::make_unique<BatchAddKeyHandler>());
-  // server.AddHttpHandler(std::regex("^/zadd/(.+?)$"),
-	// 		std::make_unique<ZaddHandler>());
-  // server.AddHttpHandler(std::regex("^/zrange/(.+?)$"),
-	// 		std::make_unique<ZrangeHandler>());
-  // server.AddHttpHandler(std::regex("^/zrmv/(.+?)$"),
-	// 		std::make_unique<ZrmvHandler>());
-  
   server.ListenOn(flare::EndpointFromIpv4("0.0.0.0", 8080));
   FLARE_CHECK(server.Start());
 

@@ -13,7 +13,7 @@ namespace cache {
 
 class KvManager {
  public:
-  KvManager* Instance();
+  static KvManager* Instance();
 
   bool Init();
 
@@ -28,7 +28,7 @@ class KvManager {
  private:
   friend class flare::NeverDestroyedSingleton<KvManager>;
   KvManager() = default;
-  MemKv _memdb;
+  MemKv<std::string> _memdb;
 };
 
 }  // namespace cache

@@ -1,7 +1,7 @@
 #include "param_parse.h"
 
 #include <regex>
-
+namespace zhi {
 namespace cache {
 std::optional<std::string> ParamParse::Get(const std::string& key) {
   std::smatch result;
@@ -39,5 +39,6 @@ ParamParse::PathParamMap ParamParse::GetPathParam(const std::string& path) {
 
   return PathParamMap(path_param.begin(), path_param.end());
 }
-
 }  // namespace cache
+
+}  // namespace zhi

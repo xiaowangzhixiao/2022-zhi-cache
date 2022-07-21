@@ -3,7 +3,7 @@
 cc_library(
     name = 'manager',
     hdrs = glob("*.h"),
-    srcs = glob("*.cc"),
+    srcs = glob("*.cc", exclude = ['*_test.cc']),
     deps = [
         "//flare/base:never_destroyed",
         '//cache/storage/memory:memory',
@@ -11,3 +11,10 @@ cc_library(
     visibility = "//cache/...",
 )
 
+cc_test(
+    name = 'manager_test',
+    srcs = glob('*_test.cc'),
+    deps = [
+        ':manager',
+    ],
+)

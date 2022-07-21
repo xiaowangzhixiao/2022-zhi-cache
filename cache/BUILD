@@ -5,6 +5,7 @@ cc_binary(
   ],
   deps = [
     '//cache/handler:handler',
+    '//cache/manager:manager',
     '//flare:init',
     '//flare/fiber:fiber',
     '//flare/init:override_flag',
