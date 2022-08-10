@@ -1,0 +1,1 @@
+nohup /root/cache_server > /root/run.log 2>&1 &

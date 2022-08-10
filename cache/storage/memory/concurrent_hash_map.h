@@ -1,7 +1,7 @@
 #pragma once
 
-#include <shared_mutex>
 #include <mutex>
+#include <shared_mutex>
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -16,18 +16,20 @@ struct ConcurrentMap {
 };
 
 template <class V>
-class MemKv {
+class HashKv {
  public:
   bool Init(int partition_num);
 
-  const V* Get(const std::string& key);
+  V* Get(const std::string& key);
+
+  V* GetOrCreate(std::string&& key, V&& value);
 
   bool Add(std::string&& key, V&& value);
 
   bool Del(const std::string& key);
 
-  MemKv() = default;
-  ~MemKv() = default;
+  HashKv() = default;
+  ~HashKv() = default;
 
  private:
   size_t Hash(const std::string& str) const;
@@ -37,23 +39,19 @@ class MemKv {
 };
 
 template <class V>
-size_t MemKv<V>::Hash(const std::string& str) const {
-  size_t result = 0;
-  for (auto it = str.cbegin(); it != str.cend(); ++it) {
-    result = (result * 131) % _partition_num + *it;
-  }
-  return result % _partition_num;
+size_t HashKv<V>::Hash(const std::string& str) const {
+  return std::hash<std::string>()(str) % _partition_num;
 }
 
 template <class V>
-bool MemKv<V>::Init(int partition_num) {
+bool HashKv<V>::Init(int partition_num) {
   _partition_num = partition_num;
   _map_vec = std::vector<ConcurrentMap<V>>(partition_num);
   return true;
 }
 
 template <class V>
-const V* MemKv<V>::Get(const std::string& key) {
+V* HashKv<V>::Get(const std::string& key) {
   size_t idx = Hash(key);
   auto& sub_map = _map_vec[idx];
   std::shared_lock lock(sub_map.m);
@@ -65,16 +63,25 @@ const V* MemKv<V>::Get(const std::string& key) {
 }
 
 template <class V>
-bool MemKv<V>::Add(std::string&& key, V&& value) {
+V* HashKv<V>::GetOrCreate(std::string&& key, V&& v) {
   size_t idx = Hash(key);
   auto& sub_map = _map_vec[idx];
-  // std::unique_lock lock(sub_map.m);
+  std::unique_lock lock(sub_map.m);
+  auto iter = sub_map.map.try_emplace(std::move(key), std::move(v)).first;
+  return &(iter->second);
+}
+
+template <class V>
+bool HashKv<V>::Add(std::string&& key, V&& value) {
+  size_t idx = Hash(key);
+  auto& sub_map = _map_vec[idx];
+  std::unique_lock lock(sub_map.m);
   sub_map.map.insert_or_assign(std::move(key), std::move(value));
   return true;
 }
 
 template <class V>
-bool MemKv<V>::Del(const std::string& key) {
+bool HashKv<V>::Del(const std::string& key) {
   size_t idx = Hash(key);
   auto& sub_map = _map_vec[idx];
   std::unique_lock lock(sub_map.m);

@@ -1,0 +1,119 @@
+### 
+GET http://localhost:8080/init HTTP/1.1
+
+###
+POST http://localhost:8080/add HTTP/1.1
+accept: */*
+Content-Type: application/json
+
+{
+  "key": "wangzhi",
+  "value": "limanting"
+}
+
+###
+GET http://localhost:8080/query/wangzhi HTTP/1.1
+
+###
+GET http://localhost:8080/del/wangzhi HTTP/1.1
+
+###
+POST http://localhost:8080/batch HTTP/1.1
+accept: */*
+Content-Type: application/json
+
+[
+  {
+    "key": "wangzhi",
+    "value": "limanting"
+  },
+  {
+    "key": "limanting",
+    "value": "wangzhi"
+  }
+]
+
+### 
+POST http://localhost:8080/list HTTP/1.1
+accept: */*
+Content-Type: application/json
+
+[
+  "wangzhi",
+  "limanting"
+]
+
+###
+POST http://localhost:8080/zadd/yuwen HTTP/1.1
+accept: */*
+Content-Type: application/json
+
+{
+  "score": 90,
+  "value": "limanting"
+}
+
+###
+POST http://localhost:8080/zadd/yuwen HTTP/1.1
+accept: */*
+Content-Type: application/json
+
+{
+  "score": 80,
+  "value": "limanting"
+}
+
+###
+POST http://localhost:8080/zadd/yuwen HTTP/1.1
+accept: */*
+Content-Type: application/json
+
+{
+  "score": 50,
+  "value": "wangzhi"
+}
+
+###
+POST http://localhost:8080/zadd/yuwen HTTP/1.1
+accept: */*
+Content-Type: application/json
+
+{
+  "score": 60,
+  "value": "manxiaozhi"
+}
+
+###
+POST http://localhost:8080/zrange/yuwen HTTP/1.1
+accept: */*
+Content-Type: application/json
+
+{
+  "min_score": 0,
+  "max_score": 100
+}
+
+###
+POST http://localhost:8080/zrange/yuwen HTTP/1.1
+accept: */*
+Content-Type: application/json
+
+{
+  "min_score": 60,
+  "max_score": 100
+}
+
+###
+GET http://localhost:8080/zrmv/yuwen/limanting HTTP/1.1
+
+###
+POST http://localhost:8080/zrange/shuxue HTTP/1.1
+accept: */*
+Content-Type: application/json
+
+{
+  "min_score": 60,
+  "max_score": 100
+}
+###
+GET http://localhost:8080/zrmv/shuxue/limanting HTTP/1.1

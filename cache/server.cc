@@ -18,6 +18,7 @@
 #include "cache/handler/kv_handler.h"
 #include "cache/handler/zset_handler.h"
 #include "cache/manager/kv_manager.h"
+#include "cache/manager/zset_manager.h"
 #include "flare/fiber/this_fiber.h"
 #include "flare/init.h"
 #include "flare/init/override_flag.h"
@@ -33,6 +34,7 @@ namespace zhi {
 namespace cache {
 int Entry(int argc, char** argv) {
   KvManager::Instance()->Init();
+  ZsetManager::Instance()->Init();
   flare::Server server;
   server.AddProtocol("http");
   server.AddHttpHandler("/init", std::make_unique<InitQueryHandler>());
@@ -43,6 +45,7 @@ int Entry(int argc, char** argv) {
                         std::make_unique<DelKeyHandler>());
   server.AddHttpHandler("/list", std::make_unique<BatchQueryKeyHandler>());
   server.AddHttpHandler("/batch", std::make_unique<BatchAddKeyHandler>());
+  
   server.AddHttpHandler(std::regex("^/zadd/(.+?)$"),
                         std::make_unique<ZaddHandler>());
   server.AddHttpHandler(std::regex("^/zrange/(.+?)$"),

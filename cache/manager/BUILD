@@ -7,6 +7,8 @@ cc_library(
     deps = [
         "//flare/base:never_destroyed",
         '//cache/storage/memory:memory',
+        "//cache/utils:leveldb_random",
+        "//cache/utils:arena",
     ],
     visibility = "//cache/...",
 )

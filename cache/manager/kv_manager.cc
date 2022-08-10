@@ -12,7 +12,7 @@ KvManager* KvManager::Instance() {
 }
 
 bool KvManager::Init() {
-  _memdb.Init(1024);
+  _memdb.Init(1403641);
   return true;
 }
 
@@ -24,8 +24,6 @@ bool KvManager::Add(std::string&& key, std::string&& value) {
   return _memdb.Add(std::move(key), std::move(value));
 }
 
-bool KvManager::Del(const std::string& key) {
-  return _memdb.Del(key);
-}
+bool KvManager::Del(const std::string& key) { return _memdb.Del(key); }
 }  // namespace cache
 }  // namespace zhi

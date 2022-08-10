@@ -5,8 +5,8 @@
 #include <unordered_map>
 #include <vector>
 
+#include "cache/storage/memory/concurrent_hash_map.h"
 #include "flare/base/never_destroyed.h"
-#include "cache/storage/memory/mem_kv.h"
 
 namespace zhi {
 namespace cache {
@@ -28,7 +28,7 @@ class KvManager {
  private:
   friend class flare::NeverDestroyedSingleton<KvManager>;
   KvManager() = default;
-  MemKv<std::string> _memdb;
+  HashKv<std::string> _memdb;
 };
 
 }  // namespace cache

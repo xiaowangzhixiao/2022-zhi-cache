@@ -31,7 +31,7 @@ void QueryKeyHandler::OnGet(const flare::HttpRequest& request,
   }
   auto* value = KvManager::Instance()->Query(*key);
   if (value == nullptr) {
-    response->set_status(flare::HttpStatus::BadRequest);
+    response->set_status(flare::HttpStatus::NotFound);
     return;
   }
   response->set_body(*value);
@@ -56,7 +56,7 @@ void AddKeyHandler::OnPost(const flare::HttpRequest& request,
     response->set_status(flare::HttpStatus::BadRequest);
     return;
   }
-  if (KvManager::Instance()->Add(std::move(insert_req.key),
+  if (!KvManager::Instance()->Add(std::move(insert_req.key),
                                  std::move(insert_req.value))) {
     response->set_status(flare::HttpStatus::BadRequest);
     return;
@@ -82,10 +82,7 @@ void DelKeyHandler::OnGet(const flare::HttpRequest& request,
     response->set_status(flare::HttpStatus::BadRequest);
     return;
   }
-  if (!KvManager::Instance()->Del(*key)) {
-    response->set_status(flare::HttpStatus::BadRequest);
-    return;
-  }
+  KvManager::Instance()->Del(*key);
   response->set_status(flare::HttpStatus::OK);
   return;
 }
@@ -117,8 +114,8 @@ void BatchQueryKeyHandler::OnPost(const flare::HttpRequest& request,
       result_vec.push_back(std::move(result));
     }
   }
-  if (!result_vec.empty()) {
-    response->set_status(flare::HttpStatus::BadRequest);
+  if (result_vec.empty()) {
+    response->set_status(flare::HttpStatus::NotFound);
     return;
   }
   response->set_body(xpack::json::encode(result_vec));

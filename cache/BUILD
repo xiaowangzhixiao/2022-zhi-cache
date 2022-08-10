@@ -14,3 +14,13 @@ cc_binary(
     '//thirdparty/gflags:gflags',
   ],
 )
+
+package(
+  name = 'cache_server_package',
+  shell = True,
+  type = 'tgz',
+  srcs = [
+      ('script/start.sh','bin/start.sh'),
+      ('$(location //cache:server)', 'bin/cache_server'),
+  ],
+)

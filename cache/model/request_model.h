@@ -1,3 +1,4 @@
+#pragma once
 #include <string>
 
 #include "thirdparty/xpack/json.h"
@@ -15,12 +16,14 @@ struct ZaddRequest
 {
   int32_t score;
   std::string value;
+  XPACK(O(score, value));
 };
 
 struct ZrangeRequest
 {
   int32_t min_score;
   int32_t max_score;
+  XPACK(O(min_score, max_score));
 };
 
 }  // namespace cache

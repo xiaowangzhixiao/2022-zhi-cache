@@ -4,7 +4,13 @@ cc_library(
     name = 'memory',
     srcs = [],
     hdrs = [
-        'mem_kv.h',
+        'concurrent_hash_map.h',
+        'atomic_hash_table.h',
+        'atomic_skip_list.h',
+    ],
+    deps = [
+        "//cache/utils:leveldb_random",
+        "//cache/utils:arena",
     ],
     visibility = "//cache/...",
 )

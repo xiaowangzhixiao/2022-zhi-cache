@@ -5,3 +5,16 @@ cc_library(
     visibility = "//cache/..."
 )
 
+cc_library(
+    name = "leveldb_random",
+    hdrs = "random.h",
+    srcs = [],
+    visibility = "//cache/..."
+)
+
+cc_library(
+    name = "arena",
+    hdrs = "arena.h",
+    srcs = ['arena.cc'],
+    visibility = "//cache/..."
+)
