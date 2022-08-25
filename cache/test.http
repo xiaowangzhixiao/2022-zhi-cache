@@ -15,6 +15,12 @@ Content-Type: application/json
 GET http://localhost:8080/query/wangzhi HTTP/1.1
 
 ###
+GET http://localhost:8080/query/limanting HTTP/1.1
+
+###
+GET http://localhost:8080/query/286c3cd6-74c3-4410-aa53-86191934a305 HTTP/1.1
+
+###
 GET http://localhost:8080/del/wangzhi HTTP/1.1
 
 ###
@@ -91,6 +97,16 @@ Content-Type: application/json
 {
   "min_score": 0,
   "max_score": 100
+}
+
+###
+POST http://localhost:8080/zrange/yuwen HTTP/1.1
+accept: */*
+Content-Type: application/json
+
+{
+  "min_score": 0,
+  "max_score": 89
 }
 
 ###

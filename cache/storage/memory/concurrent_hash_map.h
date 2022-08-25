@@ -1,5 +1,7 @@
 #pragma once
 
+#include "flare/fiber/shared_mutex.h"
+
 #include <mutex>
 #include <shared_mutex>
 #include <string>
@@ -11,7 +13,7 @@ namespace cache {
 
 template <class V>
 struct ConcurrentMap {
-  std::shared_mutex m;
+  flare::fiber::SharedMutex m;
   std::unordered_map<std::string, V> map;
 };
 

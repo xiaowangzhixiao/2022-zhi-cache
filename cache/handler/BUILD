@@ -12,6 +12,8 @@ cc_library(
         "//flare/base:logging",
         "//thirdparty/jsoncpp:jsoncpp",
         "//thirdparty/xpack:xpack",
+        "//flare/fiber:async",
+        "//flare/fiber:fiber"
     ],
     visibility = "//cache/...",
 )

@@ -11,6 +11,7 @@ cc_library(
     deps = [
         "//cache/utils:leveldb_random",
         "//cache/utils:arena",
+        "//flare/fiber:fiber",
     ],
     visibility = "//cache/...",
 )

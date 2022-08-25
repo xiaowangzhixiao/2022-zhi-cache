@@ -7,7 +7,7 @@ cmake_build(
     source_dir ='leveldb-1.23',
     lib_names = ['leveldb'],
     cmake_options=[
-        '-DCMAKE_BUILD_TYPE=Release'
+        '-DCMAKE_BUILD_TYPE=Release',
     ],
     deps=[
         '//thirdparty/googletest:gtest',

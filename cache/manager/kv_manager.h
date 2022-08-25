@@ -19,7 +19,7 @@ class KvManager {
 
   const std::string* Query(const std::string& key);
 
-  bool Add(std::string&& key, std::string&& value);
+  bool Add(std::string key, std::string value);
 
   bool Del(const std::string& key);
 

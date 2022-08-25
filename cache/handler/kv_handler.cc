@@ -1,13 +1,17 @@
 #include "cache/handler/kv_handler.h"
 
+#include <memory>
 #include <string>
 #include <vector>
 
 #include "cache/manager/kv_manager.h"
+#include "cache/manager/localdb_manager.h"
 #include "cache/model/request_model.h"
 #include "cache/utils/param_parse.h"
-#include "flare/rpc/http_handler.h"
 #include "flare/base/logging.h"
+#include "flare/fiber/async.h"
+#include "flare/fiber/future.h"
+#include "flare/rpc/http_handler.h"
 
 namespace zhi {
 namespace cache {
@@ -50,18 +54,21 @@ void AddKeyHandler::OnPost(const flare::HttpRequest& request,
                            flare::HttpResponse* response,
                            flare::HttpServerContext* context) {
   auto body = request.body();
-  InsertRequest insert_req;
-  xpack::json::decode(*body, insert_req);
-  if (insert_req.key.empty() || insert_req.value.empty()) {
+  auto insert_req = std::make_shared<InsertRequest>();
+  xpack::json::decode(*body, *insert_req);
+  if (insert_req->key.empty() || insert_req->value.empty()) {
     response->set_status(flare::HttpStatus::BadRequest);
     return;
   }
-  if (!KvManager::Instance()->Add(std::move(insert_req.key),
-                                 std::move(insert_req.value))) {
+  if (!KvManager::Instance()->Add(insert_req->key, insert_req->value)) {
     response->set_status(flare::HttpStatus::BadRequest);
     return;
   }
   response->set_status(flare::HttpStatus::OK);
+  flare::fiber::Async([=] {
+    LocaldbManager::Instance()->Add(std::move(insert_req->key),
+                                    std::move(insert_req->value));
+  });
   return;
 }
 
@@ -104,16 +111,25 @@ void BatchQueryKeyHandler::OnPost(const flare::HttpRequest& request,
     response->set_status(flare::HttpStatus::BadRequest);
     return;
   }
-  std::vector<InsertRequest> result_vec;
+  std::vector<flare::future::Future<const std::string*>> result_future_vec;
   for (auto&& key : key_vec) {
-    auto* value = KvManager::Instance()->Query(key);
+    result_future_vec.push_back(flare::fiber::Async(
+        [&key] { return KvManager::Instance()->Query(key); }));
+  }
+  std::vector<InsertRequest> result_vec;
+  size_t index = 0;
+  for (auto&& future : result_future_vec) {
+    auto value = flare::fiber::BlockingGet(std::move(future));
+    auto&& key = key_vec[index];
     if (value != nullptr) {
       InsertRequest result;
       result.key = std::move(key);
       result.value = *value;
       result_vec.push_back(std::move(result));
     }
+    index++;
   }
+
   if (result_vec.empty()) {
     response->set_status(flare::HttpStatus::NotFound);
     return;
@@ -134,12 +150,19 @@ void BatchAddKeyHandler::OnPost(const flare::HttpRequest& request,
                                 flare::HttpResponse* response,
                                 flare::HttpServerContext* context) {
   auto body = request.body();
-  std::vector<InsertRequest> insert_req_vec;
-  xpack::json::decode(*body, insert_req_vec);
-  for (auto&& insert_vec: insert_req_vec) {
-    KvManager::Instance()->Add(std::move(insert_vec.key), std::move(insert_vec.value));
+  auto insert_req_vec = std::make_shared<std::vector<InsertRequest>>();
+  xpack::json::decode(*body, *insert_req_vec);
+  std::vector<flare::future::Future<>> future_vec;
+  for (auto&& insert_vec : *insert_req_vec) {
+    future_vec.push_back(flare::fiber::Async([&insert_vec] {
+      KvManager::Instance()->Add(insert_vec.key, insert_vec.value);
+      return;
+    }));
   }
+  flare::fiber::BlockingGet(flare::WhenAll(std::move(future_vec)));
   response->set_status(flare::HttpStatus::OK);
+  flare::fiber::Async(
+      [=] { LocaldbManager::Instance()->Batch(*insert_req_vec); });
   return;
 }
 }  // namespace cache

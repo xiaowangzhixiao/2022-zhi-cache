@@ -19,8 +19,10 @@
 #include "cache/handler/zset_handler.h"
 #include "cache/manager/kv_manager.h"
 #include "cache/manager/zset_manager.h"
+#include "cache/manager/localdb_manager.h"
 #include "flare/fiber/this_fiber.h"
 #include "flare/init.h"
+#include "flare/fiber/async.h"
 #include "flare/init/override_flag.h"
 #include "flare/rpc/http_handler.h"
 
@@ -55,6 +57,9 @@ int Entry(int argc, char** argv) {
 
   server.ListenOn(flare::EndpointFromIpv4("0.0.0.0", 8080));
   FLARE_CHECK(server.Start());
+  flare::fiber::Async([] {
+    LocaldbManager::Instance()->Init("/mydata");
+  });
 
   while (!flare::CheckForQuitSignal()) {
     flare::this_fiber::SleepFor(1s);

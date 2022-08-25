@@ -9,6 +9,8 @@ cc_library(
         '//cache/storage/memory:memory',
         "//cache/utils:leveldb_random",
         "//cache/utils:arena",
+        '//flare/base:logging',
+        '//thirdparty/leveldb:leveldb'
     ],
     visibility = "//cache/...",
 )
@@ -18,5 +20,9 @@ cc_test(
     srcs = glob('*_test.cc'),
     deps = [
         ':manager',
+        '//thirdparty/leveldb:leveldb'
     ],
+    testdata=[
+        ('testdata', 'data'),
+    ]
 )

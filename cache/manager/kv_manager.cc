@@ -20,7 +20,7 @@ const std::string* KvManager::Query(const std::string& key) {
   return _memdb.Get(key);
 }
 
-bool KvManager::Add(std::string&& key, std::string&& value) {
+bool KvManager::Add(std::string key, std::string value) {
   return _memdb.Add(std::move(key), std::move(value));
 }
 

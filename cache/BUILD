@@ -20,7 +20,7 @@ package(
   shell = True,
   type = 'tgz',
   srcs = [
-      ('script/start.sh','bin/start.sh'),
-      ('$(location //cache:server)', 'bin/cache_server'),
+      ('script/start.sh','start.sh'),
+      ('$(location //cache:server)', 'cache_server'),
   ],
 )
