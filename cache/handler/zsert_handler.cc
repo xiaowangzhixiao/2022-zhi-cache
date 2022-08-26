@@ -25,7 +25,7 @@ void ZaddHandler::OnPost(const flare::HttpRequest& request,
     response->set_status(flare::HttpStatus::BadRequest);
     return;
   }
-  ZaddRequest zadd_request;
+  ZaddRequest zadd_request{};
   auto body = request.body();
   xpack::json::decode(*body, zadd_request);
 
@@ -54,7 +54,7 @@ void ZrangeHandler::OnPost(const flare::HttpRequest& request,
     response->set_status(flare::HttpStatus::BadRequest);
     return;
   }
-  ZrangeRequest zrange_request;
+  ZrangeRequest zrange_request{};
   auto body = request.body();
   xpack::json::decode(*body, zrange_request);
   auto range_res = ZsetManager::Instance()->Range(
